@@ -108,38 +108,6 @@ L2正则化可以防止模型过拟合（overfitting）；一定程度上，L1�
 
 例如，相比低次多项式和正的权重衰减设定，更高次的多项式和权重衰减参数设定 λ = 0 总能在训练集上更好地拟合。
 
-# 分类问题
-
-**分类问题：**
-
-**已知集合：**![img](file:////tmp/wps-didi/ksohtml/wpshFstBe.png)**和**![img](file:////tmp/wps-didi/ksohtml/wpsoPKHzZ.png)**，确定映射规则**![img](file:////tmp/wps-didi/ksohtml/wpsmzogAo.png)**，使得任意**![img](file:////tmp/wps-didi/ksohtml/wpsossQ6e.png)**有且仅有一个使得**![img](file:////tmp/wps-didi/ksohtml/wpsI6o7ZK.png)![img](file:////tmp/wps-didi/ksohtml/wpsCccwcu.png)**成立。（不考虑模糊数学里的模糊集情况）**
-
-​      **注：****其中C叫做类别集合，其中每一个元素是一个类别，而I叫做项集合，其中每一个元素是一个待分类项，f叫做分类器。分类算法的任务就是构造分类器f。**
-
- 
-
-**评价分类器性能的指标是准确率。**
-
-**准确率**：对于给定的测试数据集，分类器正确的分类的样本数与总样本数之比。
-
- 
-
-**对于二分类问题常用的评价指标是精确率和召回率。**
-
-将真实类别与学习器预测类别组合分为：**真正例（TP）、假正例（FP）、真反例（TN）、假反例（FN）**
-
-分类结果为**混淆矩阵**。
-
-**精确率**（查准率（P））：  P=TP/(TP+FP)    所有预测为正例样本中的真实为正例的概率
-
-**召回率**（查全率（R））：  R=TP/(TP+FN)    所有真实正例样本中的预测为正例的概率
-
-一般查准率高时，查全率往往偏低。
-
-**F1值**：是准确率和召回率的调和均值。
-
-![img](file:////tmp/wps-didi/ksohtml/wpsTON4kx.png)
-
 # 回归问题
 
 补充：性能评估的其他方法：留出法和自助法
@@ -161,3 +129,79 @@ L2正则化可以防止模型过拟合（overfitting）；一定程度上，L1�
 监督学习：
 
 监督学习算法需要处理两个问题：（1）损失函数尽可能的小，这样使得目标函数能够尽可能的符合样本；（2）正则化函数对训练结果进行惩罚，避免过拟合，这样在预测的时候才能够准确。
+
+# 模型评估
+
+**对于分类器即分类算法来说，模型评估主要指标有：precision，recall，F-score，ROC，AUC。**
+
+**评价分类器性能的指标是准确率。**
+
+**准确率**：对于给定的测试数据集，分类器正确的分类的样本数与总样本数之比。
+
+ 
+
+**对于二分类问题常用的评价指标是精确率和召回率。**
+
+将真实类别与学习器预测类别组合分为：**真正例（TP）、假正例（FP）、真反例（TN）、假反例（FN）**
+
+分类结果为**混淆矩阵**。
+
+**精确率**（查准率（P））：  P=TP/(TP+FP)    所有预测为正例样本中的真实为正例的概率
+
+**召回率**（查全率（R））：  R=TP/(TP+FN)    所有真实正例样本中的预测为正例的概率
+
+一般查准率高时，查全率往往偏低。
+
+**F1值**：是准确率和召回率的调和均值。
+
+## ROC曲线
+
+**链接：**https://www.jianshu.com/p/c61ae11cc5f6
+
+**概述：**
+
+ROC曲线：接收者操作特征曲线（[receiver operating characteristic curve](https://en.wikipedia.org/wiki/Receiver_operating_characteristic)），是反映敏感性和特异性连续变量的综合指标，roc曲线上每个点反映着对同一信号刺激的感受性。
+
+
+
+## AUC
+
+**概念：**
+
+AUC ([Area Under Curve](https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve)) 被定义为ROC曲线下的面积，显然这个面积的数值不会大于1。又由于ROC曲线一般都处于y=x这条直线的上方，所以AUC的取值范围一般在0.5和1之间。使用AUC值作为评价标准是因为很多时候ROC曲线并不能清晰的说明哪个分类器的效果更好，而作为一个数值，对应AUC更大的分类器效果更好。
+
+**直观理解：**
+
+首先AUC值是一个概率值，当你随机挑选一个正样本以及一个负样本，当前的分类算法根据计算得到的Score值将这个正样本排在负样本前面的概率就是AUC值。当然，AUC值越大，当前的分类算法越有可能将正样本排在负样本前面，即能够更好的分类。
+
+**判断标准：**
+
+- AUC = 1，是完美分类器，采用这个预测模型时，存在至少一个阈值能得出完美预测。绝大多数预测的场合，不存在完美分类器。
+- 0.5 < AUC < 1，优于随机猜测。这个分类器（模型）妥善设定阈值的话，能有预测价值。
+- AUC = 0.5，跟随机猜测一样（例：丢铜板），模型没有预测价值。
+- AUC < 0.5，比随机猜测还差；但只要总是反预测而行，就优于随机猜测。
+
+**AUC值越大的分类器，正确率越高**。
+
+**sklearn求AUC：**
+
+```python
+import pandas as pd
+import numpy as np
+from sklearn.metrics import roc_auc_score
+from sklearn.linear_model import LinearRegression
+
+data_raw = pd.read_csv('./dnn_gbdt.csv',header=None,sep=' ',names=['label', 'dnn_p', 'gbdt_p','trace_id'])
+featrues = ['dnn_p','gbdt_p']
+X = data_raw[featrues]
+Y = data_raw['label']
+
+linreg = LinearRegression()
+reg = linreg.fit(X, Y)
+print linreg.intercept_
+print linreg.coef_
+
+Y_pre = reg.predict(X)
+roc_auc_score(Y, Y_pre)
+```
+
